@@ -3,6 +3,7 @@
 #include <functional>
 #include <iostream>
 #include <regex>
+#include <map>
 #include "List.hpp"
 #pragma once
 namespace OVERDOSE_EXT {
@@ -80,11 +81,41 @@ namespace OVERDOSE_EXT {
     };
   }
 
+  template<typename KEY, typename RET, typename F>
+  auto groupBy(const F& f) {
+    return [f](std::vector<RET> source) {
+      std::map<KEY, std::vector<RET>> tmp; 
+      for(RET s:source) {
+        KEY key = f(s);
+        if( tmp.find(key) == tmp.end() ) tmp[key] = std::vector<RET>();
+        tmp[key].push_back(s);
+      }
+      std::vector<std::tuple<KEY, std::vector<RET>>> ret;
+      for( auto [key, vec] : tmp) ret.push_back( std::make_pair(key, vec) );
+      return ret;
+    };
+  }
+
   template<typename R,typename F>
   auto let(const F& f)  { 
     //using Decl = decltype(f());
     return [f](const R& r) {
       return f(r);
+    };
+  }
+
+  template<typename INPUT>
+  auto joinToString(const std::string& str) {
+    return [str](const std::vector<INPUT>& inputs) {
+      std::vector<std::string> buff;
+      for(INPUT input:inputs) {
+        buff.push_back(std::to_string(input));
+        buff.push_back(str);
+      }
+      buff.pop_back();
+      std::string mozaic = "";
+      for(auto b:buff) mozaic += b;
+      return mozaic;
     };
   }
 };

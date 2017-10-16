@@ -58,6 +58,18 @@ void classMapTest() {
     cout << "FizzBuzz: " << i << " " << echo << endl;
     return 0;
   });
+
+  // groupByのテスト
+  OD::Range(0,100) >> mapper<int,int>( [](int i) {
+    return i*3;
+  }) >> groupBy<int, int>( [](int i){ 
+    return i%5;
+  }) >> mapper<tuple<int, vector<int>>, int>( [](auto tupl){
+    cout << "KEY: " << get<0>(tupl) << endl;
+    auto val = get<1>(tupl) >> joinToString<int>(",");
+    cout << "VAL: " << val << endl;
+    return 0; 
+  });
 }
 
 int main() {
