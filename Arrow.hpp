@@ -80,6 +80,18 @@ namespace OVERDOSE_EXT {
       return res;
     };
   }
+  
+  template<typename INPUT, typename FUNCTOR>
+  auto filter(const FUNCTOR& f) {
+    return [f](const std::vector<INPUT>& source) {
+      std::vector<INPUT> res;
+      for(INPUT s:source) {
+        if( f(s) == true)
+          res.push_back(s);
+      }
+      return res;
+    };
+  }
 
   template<typename KEY, typename RET, typename F>
   auto groupBy(const F& f) {

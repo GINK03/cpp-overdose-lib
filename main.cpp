@@ -62,6 +62,8 @@ void classMapTest() {
   // groupByのテスト
   OD::Range(0,100) >> mapper<int,int>( [](int i) {
     return i*3;
+  }) >> filter<int>( [](int i) {
+    return i%2 == 1;
   }) >> groupBy<int, int>( [](int i){ 
     return i%5;
   }) >> mapper<tuple<int, vector<int>>, int>( [](auto tupl){
