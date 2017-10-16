@@ -68,7 +68,7 @@ void classMapTest() {
     return i%5;
   }) >> mapper<tuple<int, vector<int>>, int>( [](auto tupl){
     cout << "KEY: " << get<0>(tupl) << endl;
-    auto val = get<1>(tupl) >> joinToString<int>(",");
+    auto val = get<1>(tupl) >> sortBy<int>([](int& a, int&b){ return a > b;}) >> joinToString<int>(",");
     cout << "VAL: " << val << endl;
     return 0; 
   });

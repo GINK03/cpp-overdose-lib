@@ -4,6 +4,8 @@
 #include <iostream>
 #include <regex>
 #include <map>
+#include <algorithm> 
+#include <iterator>
 #include "List.hpp"
 #pragma once
 namespace OVERDOSE_EXT {
@@ -128,6 +130,15 @@ namespace OVERDOSE_EXT {
       std::string mozaic = "";
       for(auto b:buff) mozaic += b;
       return mozaic;
+    };
+  }
+
+  template<typename INPUT, typename FUNCTOR>
+  auto sortBy(const FUNCTOR& f) {
+    return [f](const std::vector<INPUT>& inputs) {
+      std::vector<INPUT> target; std::copy(inputs.begin(), inputs.end(), std::back_inserter(target));
+      std::sort(target.begin(), target.end(), f);
+      return target;
     };
   }
 };
