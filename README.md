@@ -166,3 +166,28 @@ GROUPBY TEST KEY: 4 VALUE: 4,9,14,19,24,29,34,39,44,49,54,59,64,69,74,79,84,89,9
 groupBy<KEY,ORIGINAL>(FUNCTOR) -> std::tuple<KEY,std::vector<ORIGINAL>>
 ```
 このようなインターフェースになります  
+
+## sortBy 
+色々な言語と一緒でsortで用いる評価式をラムダ式で与えることで、実現しています  
+
+特にPythonとKotlinのsortByがいいと思っていて、評価式をラムダ式で与えるのではなく、キーとなる値を返すラムダ式を与えるとシンプルで良いと思います  
+
+Python3で降順にソートする際は、このような表現を取ることができます  
+```python
+>>> sorted([1,2,3,4,5,6,7], key=lambda x:x*-1)
+[7, 6, 5, 4, 3, 2, 1]
+```
+
+これをC++で似たシンタックスで実現すると、このようになります  
+```cpp
+void sortByTest() {
+  vector<int> src = {1,2,3,4,5,6,7};
+  src >> sortBy<int, int>([](int i){ return i*-1;}) >> echo<int>();
+}
+(出力)-> 
+[7,6,5,4,3,2,1]
+```
+インターフェース
+```cpp
+sotedBy<KET,ORIGINAL>(FUNCTOR) -> vector<ORIGINAL>
+```
