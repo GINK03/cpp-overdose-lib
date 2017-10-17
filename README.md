@@ -91,7 +91,12 @@ mapper<INPUT, OUTPUT> -> vector<OUTPUT>
 Scala, Ruby, KotlinのReduceとほぼ同じ働きをします  
 Reduceは何らかの畳み込みを行うのですが、掛け算と、足し算であるべき初期値が異なったりします(足し算では初期値が0.0, 掛け算などでは1.0など)  
 ```cpp
-
+void reducerTest() {
+  vector<int>({1,2,3,4,5,6})
+    >> reducer<int, int>(0, [](int& y, int x){ y = y+x;} )
+    >> let<int>([](auto out){ cout << "REDUCED: " << out << endl;});
+}
+(出力)-> REDUCED: 21
 ```
 reducer<INPUT,OUTPUT> -> OUTPUT  
 
