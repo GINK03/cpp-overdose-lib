@@ -189,5 +189,5 @@ void sortByTest() {
 ```
 インターフェース
 ```cpp
-sotedBy<KET,ORIGINAL>(FUNCTOR) -> vector<ORIGINAL>
+sortBy<KET,ORIGINAL>(FUNCTOR) -> vector<ORIGINAL>
 ```
