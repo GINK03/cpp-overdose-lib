@@ -266,3 +266,22 @@ void flattenTest() {
 ```cpp
 flatten<INPUT>() -> std::vector<INPUT>
 ```
+
+## distinct
+特定のキーで重複を消します(発見した最後の値のみが保存されます)  
+```cpp
+void distinctTest() {
+  vector<pair<string,int>> src = { {"a",1}, {"b",2}, {"b",3}, {"c",4}, {"a",5} };
+  src >> distinct<string, pair<string,int>>([](auto t){
+    return get<0>(t);
+  }) >> mapper<pair<string,int>,int>( [](auto t){
+    auto [key,val] = t;
+    cout << "DISTINCT: " << key << " VALUE: " << val << endl;
+    return 0;
+  }) ;
+}
+(出力)-> 
+DISTINCT: a VALUE: 5
+DISTINCT: b VALUE: 3
+DISTINCT: c VALUE: 4
+```
