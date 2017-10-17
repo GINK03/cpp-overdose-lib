@@ -50,20 +50,21 @@ $ ./bin/a.out
 RのdplyrやPythonのpandas、Apache SparkのRDDなどを参考にして実装しました
 dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比較表です
 
-| dplyr(R)   | Spark RDD(Scala,Java)| overdose(C++) |
-|:-----------:|:------------:|:------------:|
-| %>%        | .(dot)      | >>(ダブルアロー)|
-| map        | map         | mapper       |
-| reduce     | reduce      | reduce       |
-| filter     | filter      | filter       |
-| group_by   | group_by    | groupBy      |
-| arrange    | sortBy      | sortBy      |
-| -          | zip         | zipMap       | 
-| accumulate | sum         | sum          |
-| -          | min         | min          | 
-| -          | max         | max          |
-| -          | mean        | mean         |
-| flatten    | flatten     | flatten      |
-| distinct   | distinct    | distinct     |
-| mutate     | (mapで代替) | (mapperで代替) | 
+| 機能        | dplyr(R)   | Spark RDD(Scala,Java)| overdose(C++) |
+|:-----------:|:-----------:|:------------:|:------------:|
+| パイプライン操作 | %>%        | .(dot)      | >>(ダブルアロー)|
+| 任意の関数で処理 | map        | map         | mapper       |
+| 畳み込み処理    | reduce     | reduce      | reduce      |
+| フィルタ操作    | filter     | filter      | filter       |
+| グルーピング    | group_by   | group_by    | groupBy      |
+| 並び替え       | arrange    | sortBy      | sortBy      |
+| 二つのデータのペアリング | -          | zip         | zipMap       | 
+| 合計値を計算 | accumulate | sum         | sum          |
+| 最小値を計算　| -          | min         | min          | 
+| 最大値を計算 | -          | max         | max          |
+| 平均値を計算 | -          | mean        | mean         |
+| 要素を取り出す | flatten    | flatten     | flatten      |
+| ユニークにする | distinct   | distinct    | distinct     |
+| 要素を追加する | mutate     | (mapで代替) | (mapperで代替) | 
+| index付きmap | -          | withIndex  | mapperIndexed | 
  
