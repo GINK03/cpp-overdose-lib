@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <thread>
+#include <future>
 #include "Split.hpp"
 #include "Open.hpp"
 #include "Vec.hpp"
@@ -10,6 +12,7 @@
 #include "List.hpp"
 #include "ListArrow.hpp"
 #include "Arrow.hpp"
+
 using namespace std;
 namespace OD=OVERDOSE;
 using namespace OVERDOSE_EXT;
@@ -204,7 +207,57 @@ void mapperIndexedTest() {
     return 0;
   });
 }
+
+#include <future> 
+#include <chrono>
+#include <queue>
+
 int main() {
+  // create task dataset
+  auto iv = OD::Range(0, 1000);
+  iv >> concurrent::mapper<int,int>( [](auto i){
+    return i;
+  }) >> echo<int>() ;
+  /* std::queue<int> que;
+  for(auto i:iv) que.push(i);
+  // check CPU status
+  int cpu_num = std::thread::hardware_concurrency();
+
+  // lambda 
+  auto task = [](int i) { 
+    string ret = "";
+    for(int num = 0; num < 100000000; num++) ret += to_string(num%2);
+    return ret; 
+  };
+  
+  
+  // make initial status
+  std::map<int, std::future<std::string>> workers_table;
+  for (int i = 0; i < cpu_num; ++i) {
+    workers_table[i] = std::async(std::launch::async, task, que.front() );
+    que.pop();
+    if(que.size() == 0) return 0;
+  }
+
+  // pooling checker of workers, and if finished, add new task
+
+  
+  while(true) {
+    for (auto& [index, element] : workers_table) {
+      auto status = element.wait_for(std::chrono::seconds(1));
+      if (status == std::future_status::deferred) {
+        std::cout << "index " << index << " deferred\n";
+      } else if (status == std::future_status::timeout) {
+        std::cout << "index " << index << " timeout\n";
+      } else if (status == std::future_status::ready) {
+        std::cout << "index ready! " << index << " (実質これが終了ということらしい)\n";
+        workers_table[index] = std::async(std::launch::async, task, que.front());
+        que.pop();
+        if(que.size() == 0) return 0;
+      }
+    }
+  } */
+  return 0;
   congresExample();
   echoTest();
   mapperTest();

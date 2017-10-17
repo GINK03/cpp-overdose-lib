@@ -6,6 +6,9 @@
 #include <map>
 #include <algorithm> 
 #include <iterator>
+#include <future>
+#include <chrono>
+#include <queue>
 #include "List.hpp"
 #pragma once
 namespace OVERDOSE_EXT {
@@ -143,7 +146,54 @@ namespace OVERDOSE_EXT {
       return tmp;
     };
   };
-
+  
+  namespace concurrent {
+    template<typename SOURCE, typename RETURN, typename FUNCTOR>
+    auto mapper(const FUNCTOR& functor) {
+      int cpu_num = std::thread::hardware_concurrency();
+      return [cpu_num, functor](const std::vector<SOURCE>& source) {
+        std::queue<SOURCE> que; 
+        // build dataset at first.
+        for(SOURCE s:source) que.push(s);
+        // result onmemory-store
+        std::vector<RETURN> returns;
+        // task scheduler.
+        std::map<int, std::optional<std::future<RETURN>>> workers_table; 
+        for (int i = 0; i < cpu_num; ++i) {
+          workers_table[i] = std::optional( std::async(std::launch::async, functor, que.front() ) ); 
+          que.pop(); 
+          if(que.size() == 0) 
+            break;
+        }
+        while( [&](){ return true; }() ) {
+          int cpu_counter = 0;
+          for (auto& [index, element] : workers_table) {
+            if( element != std::nullopt ) { 
+              auto status = element->wait_for(std::chrono::seconds(1));
+              if (status == std::future_status::deferred) {
+              } else if (status == std::future_status::timeout) {
+              } else if (status == std::future_status::ready) {
+                auto value = element->get();
+                // push result to onmemory-store
+                returns.push_back( value );
+                if(que.size() == 0) {
+                  workers_table[index] = std::nullopt;
+                } else {
+                  workers_table[index] = std::optional( std::async(std::launch::async, functor, que.front()) );
+                  que.pop();
+                }
+              } 
+            } else {
+              cpu_counter += 1; 
+            } // end std::optional if
+          } // end for
+          // 空きスロットが全てのCPUで発生したら終了
+          if( cpu_counter == cpu_num ) break;
+        }
+        return returns;
+      };
+    };
+  };//end concurrent
   template<typename SOURCE, typename TARGET, typename F>
   auto reducer(const TARGET& target, const F& f) {
     return [target, f](std::vector<SOURCE> source) {
