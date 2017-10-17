@@ -56,13 +56,21 @@ namespace OVERDOSE_EXT {
     };
   };  
 
-  template<typename T>
+  template<typename SOURCE>
   auto echo() {
-    return [](const std::vector<T>& source) {
-      std::cout << "[";
-      for(auto s: source) {
-        std::cout << s << ",";
+    return [](const std::vector<SOURCE>& source) {
+      std::vector<std::string> tmp; 
+      for (auto s: source) {
+        if constexpr ( std::is_same<SOURCE, std::string>{} ) {
+          tmp.push_back(s);
+        } else {
+          tmp.push_back(std::to_string(s));
+        }
+        tmp.push_back(",");
       }
+      tmp.pop_back();
+      std::cout << "[";
+      for( auto str:tmp) std::cout << str;
       std::cout << "]" << std::endl;
     };
   };  
@@ -92,13 +100,27 @@ namespace OVERDOSE_EXT {
     return y;
   };  
 
-  template<typename S, typename R, typename F>
-  auto mapper(const F& f) {
-    return [f](std::vector<S> source) {
-      std::vector<R> tmp; 
+  template<typename SOURCE, typename RETURN, typename FUNCTOR>
+  auto mapper(const FUNCTOR& f) {
+    return [f](std::vector<SOURCE> source) {
+      std::vector<RETURN> tmp; 
       for(auto s:source) {
-        R r = f(s); 
+        RETURN r = f(s); 
         tmp.push_back(r);
+      }
+      return tmp;
+    };
+  };
+  
+  template<typename SOURCE, typename RETURN, typename FUNCTOR>
+  auto mapperIndexed(const FUNCTOR& f) {
+    return [f](std::vector<SOURCE> source) {
+      std::vector<std::tuple<int, RETURN>> tmp; 
+      int index = 0;
+      for(auto s:source) {
+        RETURN r = f(s); 
+        tmp.push_back(std::make_tuple( index, r));
+        index++;
       }
       return tmp;
     };
@@ -194,6 +216,34 @@ namespace OVERDOSE_EXT {
       int size = inputs.size();
       for(INPUT input:inputs) buff += input;
       return OUTPUT(buff)/size;
+    };
+  }
+  
+  template<typename INPUT, typename OUTPUT=double>
+  auto flatten() {
+    return [](const std::vector<std::vector<INPUT>>& inputs) {
+      std::vector<INPUT> tmp;
+      for(const std::vector<INPUT> input:inputs) {
+        for(const INPUT entry:input) tmp.push_back(entry);
+      }
+      return tmp; 
+    };
+  }
+  
+  template<typename INPUT, typename KEY, typename FUNCTOR>
+  auto distinct(const FUNCTOR& f) {
+    return [f](const std::vector<INPUT>& inputs) {
+      std::map<KEY, INPUT> ma;
+      for(auto input:inputs) {
+        auto key = f(input);
+        ma[key] = input;
+      }
+      std::vector<INPUT> tmp;
+      for(auto [key, val]: ma) {
+        tmp.push_back(val);
+      }
+
+      return tmp; 
     };
   }
 

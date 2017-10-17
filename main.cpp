@@ -119,8 +119,40 @@ void congresExample() {
   });
 }
 
+void echoTest() {
+  auto src = vector{1, 2, 3, 4};
+  src >> mapper<int,int>([](int i ){ return i*i;}) >> echo<int>();
+}
+
+void flattenTest() {
+  vector<vector<int>> src = { {1,2},{2,3},{3,4},{4,5} };
+  src >> flatten<int>() >> echo<int>();
+}
+
+void distinctTest() {
+  vector<string> src = {"a", "b", "b", "c", "a"};
+  src >> distinct<string, string>([](string str){
+    return str;
+  }) >> echo<string>();
+}
+
+void mapIndexedTest() {
+  vector<string> src = {"a", "b", "b", "c", "a"};
+  src >> mapperIndexed<string, string>( [](auto str) {
+    return str;
+  }) >> mapper<tuple<int,string>, int>( [](auto tup ) {
+    auto [key,val] = tup;
+    cout << "Index: " << key << " Val: " << val << endl;
+    return 0;
+  });
+}
+
 int main() {
   congresExample();
+  echoTest();
+  flattenTest();
+  distinctTest();
+  mapIndexedTest();
   return 1;
   classMapTest(); 
   return 1;
