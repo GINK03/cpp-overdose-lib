@@ -82,7 +82,10 @@ void mapperTest() {
 }
 (出力)-> [1,4,9,16,25,36]
 ```
-mapper<INPUT, OUTPUT> -> vector<OUTPUT>
+インターフェース
+```cpp
+mapper<INPUT, OUTPUT> -> std::vector<OUTPUT>
+```
 左にデータとなる構造を置き、>>(ダブルアロー)で射とするべき関数を用意します  
 この時、mapperのラムダ式に入力される型情報をINPUT,戻り値の型をOUTPUTとします  
 なので、型変換などにも用いることができます  
@@ -98,7 +101,10 @@ void reducerTest() {
 }
 (出力)-> REDUCED: 21
 ```
-reducer<INPUT,OUTPUT> -> OUTPUT  
+インターフェース
+```
+reducer<INPUT,OUTPUT> -> std::vector<OUTPUT>
+```
 
 入力される型情報と、出力される型情報を指定します  
 
@@ -118,7 +124,10 @@ void filterTest() {
 (出力)-> 
 [2,4,6]
 ```
-filter<INPUT, OUTPUT>(FUNCTOR)  
+インターフェース
+```cpp
+filter<INPUT, OUTPUT>(FUNCTOR) -> std::vector<OUTPUT>
+```
 このようなインターフェースです
 
 ## groupBy
