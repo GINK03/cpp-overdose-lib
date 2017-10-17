@@ -285,3 +285,29 @@ DISTINCT: a VALUE: 5
 DISTINCT: b VALUE: 3
 DISTINCT: c VALUE: 4
 ```
+
+## mapperIndexed（インデックス付きマップ）
+関数型におけるmapは並列性が担保されるべきで、本来はindexとかつけられないと思うのですが、一部のScalaやRubyなどの実装系においてはindexがついた状態でのmapが可能です  
+
+同様のことをc++で行うと、このように用いることができます  
+```cpp
+void mapperIndexedTest() {
+  vector<string> src = {"a", "b", "b", "c", "a"};
+  src >> mapperIndexed<string, int>( [](int index, auto str) {
+    cout << "Index: " << index << " Val: " << str << endl;
+    return 0;
+  });
+}
+(出力)-> 
+Index: 0 Val: a
+Index: 1 Val: b
+Index: 2 Val: b
+Index: 3 Val: c
+Index: 4 Val: a
+```
+インターフェースは普通のmapと変わらないのですが、functorがindexを受け取れるようになっています  
+```cpp
+mapperIndexed<INPUT, OUTPUT>(FUNCTOR) -> std::vector<OUTPUT>
+```
+
+
