@@ -191,3 +191,35 @@ void sortByTest() {
 ```cpp
 sortBy<KET,ORIGINAL>(FUNCTOR) -> vector<ORIGINAL>
 ```
+
+## zip 
+Pythonでzip関数もあるのですが、Kotlinのようなzipを定義したいと思います  
+
+Kotlinではzipはこのようになっています  
+```kotlin
+>>> listOf(1,2,3,4,5).zip(listOf("a", "b", "c", "d", "e"))
+[(1, a), (2, b), (3, c), (4, d), (5, e)]
+```
+
+今回作成したoverdoseでは次のようになります  
+```cpp
+void zipTest() {
+  vector<int> source = {1,2,3,4,5,6,7};
+  vector<string> target = {"a","b","c","d","e","f","g"};
+  source >> zip<int, string>(target) >> let<vector<pair<int,string>>>([](auto ts){
+    for(auto t1:ts) {
+      auto [src, tgt] = t1;
+      cout << "SOURCE: " << src << " TARGET: " << tgt << endl;
+    }
+  });
+}
+(出力)-> 
+SOURCE: 1 TARGET: a
+SOURCE: 2 TARGET: b
+SOURCE: 3 TARGET: c
+SOURCE: 4 TARGET: d
+SOURCE: 5 TARGET: e
+SOURCE: 6 TARGET: f
+SOURCE: 7 TARGET: g
+```
+
