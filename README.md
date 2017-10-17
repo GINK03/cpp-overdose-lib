@@ -55,6 +55,12 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 | %>%        | .(dot)      | >>(ダブルアロー)|
 | map        | map         | mapper       |
 | reduce     | reduce      | reduce       |
-| filter     | filter         | be          ilt |
-| left       | right       | center       |
-| aligned    | aligned     | aligned      |
+| filter     | filter      | filter       |
+| group_by   | group_by    | groupBy      |
+| arrange    | sortBy      | sortBy      |
+| -          | zip         | zipMap       | 
+| accumulate | sum         | sum          |
+| -          | min         | min          | 
+| -          | max         | max          |
+| -          | mean        | mean         |
+| flatten    | flatten     | -            | 
