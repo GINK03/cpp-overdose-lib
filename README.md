@@ -68,3 +68,17 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 | 要素を追加する | mutate     | (mapで代替) | (mapperで代替) | 
 | index付きmap | -          | withIndex  | mapperIndexed | 
  
+## mapper
+ 一般的なScala, Ruby, Kotlinなどのmap処理に該当します。vectorの要素の中身に、ラムダ式でデータを操作することで、任意の形に変形します　　
+ 
+例えば、[1, 2, 3, 4, 5, 6]のリストを全て二乗して、[1, 4, 9, 16, 25, 36]というデータを得たいとします  
+ 
+この時、overdoseではこのようにします  
+```cpp
+void mapperTest() {
+  vector<int>({1,2,3,4,5,6})
+    >> mapper<int,int>([](int i){ return i*i;}) 
+    >> echo<int>();
+}
+ (出力)-> [1,4,9,16,25,36]
+ ```
