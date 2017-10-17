@@ -65,4 +65,5 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 | -          | mean        | mean         |
 | flatten    | flatten     | flatten      |
 | distinct   | distinct    | distinct     |
+| mutate     | (mapで代替) | (mapperで代替) | 
  
