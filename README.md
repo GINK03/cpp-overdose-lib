@@ -226,3 +226,28 @@ SOURCE: 7 TARGET: g
 ```cpp
 zip<SOURCE,TARGET>(std::vector<TARGET>) -> std::vector<std::pair<SOURCE,TARGET>>
 ```
+
+## sum
+他の言語でも色々実装されていますが、こんな感じです  
+```cpp
+void sumMeanMaxMinTest() {
+  vector<int> source = {1,2,3,4,5,6};
+  auto print = [](double i) { cout << i << endl; };
+  source >> sum<int>() >> let<int>(print);
+  source >> mean<int>() >> let<double>(print);
+  source >> max<int>() >> let<int>(print);
+  source >> min<int>() >> let<int>(print);
+}
+(出力)-> 
+21
+3.66667
+6
+1
+```
+インターフェース  
+```cpp
+sum<INPUT> -> INPUT
+mean<INPUT> -> double
+max<INPUT> -> INPUT
+min<INPUT> -> INPUT
+```
