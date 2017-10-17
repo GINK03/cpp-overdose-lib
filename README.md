@@ -133,7 +133,7 @@ filter<INPUT, OUTPUT>(FUNCTOR) -> std::vector<OUTPUT>
 ## groupBy
 KotlinのgroupByに触発されて使いました  
 KotlinのgroupByではList型に変換すると、このようなデータ構造で帰ってきます。
-```
+```kotlin
 List<Pair<KEY,List<ORIGINAL>>>
 ```
 この構造が便利で特定のキーで集約したい場合によく使います。
@@ -161,7 +161,8 @@ GROUPBY TEST KEY: 2 VALUE: 2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,82,87,9
 GROUPBY TEST KEY: 3 VALUE: 3,8,13,18,23,28,33,38,43,48,53,58,63,68,73,78,83,88,93,98
 GROUPBY TEST KEY: 4 VALUE: 4,9,14,19,24,29,34,39,44,49,54,59,64,69,74,79,84,89,94,99
 ```
-
+インターフェース
+```cpp
 groupBy<KEY,ORIGINAL>(FUNCTOR) -> std::tuple<KEY,std::vector<ORIGINAL>>
-
-このようなインターフェースになります
+```
+このようなインターフェースになります  
