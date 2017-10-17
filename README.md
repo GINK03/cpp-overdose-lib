@@ -222,4 +222,7 @@ SOURCE: 5 TARGET: e
 SOURCE: 6 TARGET: f
 SOURCE: 7 TARGET: g
 ```
-
+インターフェース
+```cpp
+zip<SOURCE,TARGET>(std::vector<TARGET>) -> std::vector<std::pair<SOURCE,TARGET>>
+```
