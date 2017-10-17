@@ -62,13 +62,13 @@ void classMapTest() {
   // groupByのテスト
   OD::Range(0,100) >> mapper<int,int>( [](int i) {
     return i*3;
-  }) >> filter<int>( [](int i) {
+  }) >> filter<int, int>( [](int i) {
     return i%2 == 1;
   }) >> groupBy<int, int>( [](int i){ 
     return i%5;
   }) >> mapper<tuple<int, vector<int>>, int>( [](auto tupl){
     cout << "KEY: " << get<0>(tupl) << endl;
-    auto val = get<1>(tupl) >> sortBy<int>([](int& a, int&b){ return a > b;}) >> joinToString<int>(",");
+    auto val = get<1>(tupl) >> sortBy<int, int>([](int a){ return a*-1;}) >> joinToString<int>(",");
     cout << "VAL: " << val << endl;
     return 0; 
   });
@@ -124,35 +124,99 @@ void echoTest() {
   src >> mapper<int,int>([](int i ){ return i*i;}) >> echo<int>();
 }
 
+
+
+void mapperTest() {
+  vector<int>({1,2,3,4,5,6})
+    >> mapper<int,int>([](int i){ return i*i;}) >> echo<int>();
+}
+
+void reducerTest() {
+  vector<int>({1,2,3,4,5,6})
+    >> reducer<int, int>(0, [](int& y, int x){ y = y+x;} )
+    >> let<int>([](auto out){ cout << "REDUCED: " << out << endl;});
+}
+
+void filterTest() {
+  vector<int>({1,2,3,4,5,6,7}) 
+    >> filter<int, int>([](int i){
+      return i%2 == 0;
+    }) >> echo<int>() ;
+}
+
+void groupByTest() {
+  vector<int> src = OD::Range(1,100);
+  src >> groupBy<int, int>( [](auto i){ 
+    return i%5;
+  }) >> mapper<tuple<int,vector<int>>, int>( [](auto tup){
+    auto [key,value] = tup;
+    auto join = value >> joinToString<int>(",");
+    cout << "GROUPBY TEST KEY: " << key << " VALUE: " << join << endl;//
+    return 0;
+  });
+}
+
+void sortByTest() {
+  vector<int> src = {1,2,3,4,5,6,7};
+  src >> sortBy<int, int>([](int i){ return i*-1;}) >> echo<int>();
+}
+
+void zipTest() {
+  vector<int> source = {1,2,3,4,5,6,7};
+  vector<string> target = {"a","b","c","d","e","f","g"};
+  source >> zip<int, string>(target) >> let<vector<pair<int,string>>>([](auto ts){
+    for(auto t1:ts) {
+      auto [src, tgt] = t1;
+      cout << "SOURCE: " << src << " TARGET: " << tgt << endl;
+    }
+  });
+}
+
+void sumMeanMaxMinTest() {
+  vector<int> source = {1,2,3,4,5,6};
+  auto print = [](double i) { cout << i << endl; };
+  source >> sum<int>() >> let<int>(print);
+  source >> mean<int>() >> let<double>(print);
+  source >> max<int>() >> let<int>(print);
+  source >> min<int>() >> let<int>(print);
+}
+
 void flattenTest() {
   vector<vector<int>> src = { {1,2},{2,3},{3,4},{4,5} };
   src >> flatten<int>() >> echo<int>();
 }
 
 void distinctTest() {
-  vector<string> src = {"a", "b", "b", "c", "a"};
-  src >> distinct<string, string>([](string str){
-    return str;
-  }) >> echo<string>();
+  vector<pair<string,int>> src = { {"a",1}, {"b",2}, {"b",3}, {"c",4}, {"a",5} };
+  src >> distinct<string, pair<string,int>>([](auto t){
+    return get<0>(t);
+  }) >> mapper<pair<string,int>,int>( [](auto t){
+    auto [key,val] = t;
+    cout << "DISTINCT: " << key << " VALUE: " << val << endl;
+    return 0;
+  }) ;
 }
 
-void mapIndexedTest() {
+void mapperIndexedTest() {
   vector<string> src = {"a", "b", "b", "c", "a"};
-  src >> mapperIndexed<string, string>( [](auto str) {
-    return str;
-  }) >> mapper<tuple<int,string>, int>( [](auto tup ) {
-    auto [key,val] = tup;
-    cout << "Index: " << key << " Val: " << val << endl;
+  src >> mapperIndexed<string, int>( [](int index, auto str) {
+    cout << "Index: " << index << " Val: " << str << endl;
     return 0;
   });
 }
-
 int main() {
   congresExample();
   echoTest();
+  mapperTest();
+  reducerTest();
+  filterTest();
+  groupByTest();
+  sortByTest();
+  zipTest();
+  sumMeanMaxMinTest();
   flattenTest();
   distinctTest();
-  mapIndexedTest();
+  mapperIndexedTest();
   return 1;
   classMapTest(); 
   return 1;
@@ -234,7 +298,7 @@ int main() {
     vals.print(",");
     return 0 ;
   });
-  auto a = "10 11 12 1 2 3" >> split >> mapper<string,int>([](string str){return stoi(str);}) >> sum<int>;
+  auto a = "10 11 12 1 2 3" >> split >> mapper<string,int>([](string str){return stoi(str);}) >> sum<int>();
   cout << "sum: " << a << endl;
   auto li = "3 5 7 9 11" 
        >> split 

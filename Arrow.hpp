@@ -91,13 +91,31 @@ namespace OVERDOSE_EXT {
       return ma;
     };
   };  
+  template<typename SOURCE, typename TARGET>
+  auto zip(std::vector<TARGET> target)  {
+    return [target](const std::vector<SOURCE>& source) {
+      std::vector<std::pair<SOURCE,TARGET>> ret;
+      for(int i=0; i < source.size() && i < target.size(); i++) {
+        try{
+          auto key = source[i];
+          auto val = target[i];
+          ret.push_back( std::make_pair(key, val) );
+        } catch(const std::exception& ex) {
+          continue;
+        }
+      }
+      return ret;
+    };
+  };  
   template<typename T>
-  T sum(const std::vector<T>& source) {
-    auto y = std::decay_t<decltype(source[0])>();
-    for(auto s: source) {
-      y += s;
-    }
-    return y;
+  auto sum() {
+    return [](std::vector<T> source) {
+      auto y = std::decay_t<decltype(source[0])>();
+      for(auto s: source) {
+        y += s;
+      }
+      return y;
+    };
   };  
 
   template<typename SOURCE, typename RETURN, typename FUNCTOR>
@@ -118,7 +136,7 @@ namespace OVERDOSE_EXT {
       std::vector<std::tuple<int, RETURN>> tmp; 
       int index = 0;
       for(auto s:source) {
-        RETURN r = f(s); 
+        RETURN r = f(index, s); 
         tmp.push_back(std::make_tuple( index, r));
         index++;
       }
@@ -126,18 +144,18 @@ namespace OVERDOSE_EXT {
     };
   };
 
-  template<typename R, typename F>
-  auto reducer(const R& r, const F& f) {
-    return [r, f](std::vector<R> source) {
-      R res = R(r);
-      for(auto s:source) {
+  template<typename SOURCE, typename TARGET, typename F>
+  auto reducer(const TARGET& target, const F& f) {
+    return [target, f](std::vector<SOURCE> source) {
+      TARGET res = TARGET(target);
+      for(SOURCE s:source) {
         f(res, s); 
       }
       return res;
     };
   }
   
-  template<typename INPUT, typename FUNCTOR>
+  template<typename INPUT, typename OUTPUT, typename FUNCTOR>
   auto filter(const FUNCTOR& f) {
     return [f](const std::vector<INPUT>& source) {
       std::vector<INPUT> res;
@@ -149,16 +167,17 @@ namespace OVERDOSE_EXT {
     };
   }
 
-  template<typename KEY, typename RET, typename F>
-  auto groupBy(const F& f) {
-    return [f](std::vector<RET> source) {
-      std::map<KEY, std::vector<RET>> tmp; 
-      for(RET s:source) {
+  template<typename KEY, typename RETURN, typename FUNCTOR>
+  auto groupBy(const FUNCTOR& f) {
+    // functorはキー生成用
+    return [f](std::vector<RETURN> source) {
+      std::map<KEY, std::vector<RETURN>> tmp; 
+      for(RETURN s:source) {
         KEY key = f(s);
-        if( tmp.find(key) == tmp.end() ) tmp[key] = std::vector<RET>();
+        if( tmp.find(key) == tmp.end() ) tmp[key] = std::vector<RETURN>();
         tmp[key].push_back(s);
       }
-      std::vector<std::tuple<KEY, std::vector<RET>>> ret;
+      std::vector<std::tuple<KEY, std::vector<RETURN>>> ret;
       for( auto [key, vec] : tmp) ret.push_back( std::make_pair(key, vec) );
       return ret;
     };
@@ -230,7 +249,7 @@ namespace OVERDOSE_EXT {
     };
   }
   
-  template<typename INPUT, typename KEY, typename FUNCTOR>
+  template<typename KEY, typename INPUT, typename FUNCTOR>
   auto distinct(const FUNCTOR& f) {
     return [f](const std::vector<INPUT>& inputs) {
       std::map<KEY, INPUT> ma;
@@ -247,12 +266,21 @@ namespace OVERDOSE_EXT {
     };
   }
 
-  template<typename INPUT, typename FUNCTOR>
+  template<typename KEY, typename INPUT, typename FUNCTOR>
   auto sortBy(const FUNCTOR& f) {
+    // functorはキー生成用
     return [f](const std::vector<INPUT>& inputs) {
-      std::vector<INPUT> target; std::copy(inputs.begin(), inputs.end(), std::back_inserter(target));
-      std::sort(target.begin(), target.end(), f);
-      return target;
+      std::vector<std::tuple<KEY, INPUT>> target; 
+      //std::copy(inputs.begin(), inputs.end(), std::back_inserter(target));
+      for(INPUT input:inputs) {
+        KEY key = f(input);
+        target.push_back( std::make_pair(key, input) );
+      }
+      std::sort(target.begin(), target.end(), [](auto& a, auto& b){ return std::get<0>(a) < std::get<0>(b);});
+
+      std::vector<INPUT> ret;
+      for(auto [key,value]:target) ret.push_back( value );
+      return ret;
     };
   }
 };
