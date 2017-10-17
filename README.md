@@ -45,3 +45,16 @@ echoは表中出力に対する出力する関数を返す関数
 $ ./bin/a.out
 [1,4,9,16]
 ```
+
+## 色々な関数を実装してみた
+RのdplyrやPythonのpandas、Apache SparkのRDDなどを参考にして実装しました
+dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比較表です
+
+| dplyr(R)   | Spark RDD(Scala,Java)| overdose(C++) |
+|:-----------|------------:|:------------:|
+| %>%        | .(dot)      | >>(ダブルアロー)|
+| map        | map         | mapper       |
+| reduce     | reduce      | reduce       |
+| filter     | filter         | be          ilt |
+| left       | right       | center       |
+| aligned    | aligned     | aligned      |
