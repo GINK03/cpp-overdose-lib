@@ -72,9 +72,56 @@ void classMapTest() {
     cout << "VAL: " << val << endl;
     return 0; 
   });
+
+  // maxのテスト
+  auto ma = vector{2, 3, 6, 4, 1} >> max<int>();
+  cout << "MAX: " << ma << endl;
+  auto mi = vector{2, 3, 6, 4, 1} >> min<int>();
+  cout << "MIN: " << mi << endl;
+  auto me = vector{2, 3, 6, 4, 1} >> mean<int>();
+  cout << "MEAN: " << me << endl;
+}
+
+struct Congress {
+  int congress;
+  int age;
+};
+void congresExample() {
+  std::string head = "";
+  vector<string> keys;
+
+  vector<map<string,string>> dataframe;
+  for(auto line : OD::Open("resources/congress-terms.csv") ) {
+    //cout << line << endl;
+    if(head == "") {  head = line; keys = line >> splitWith(","); continue; }
+    vector<string> vals = line >> splitWith(",");
+    auto ma = keys >> zipMap<string, string>(vals);
+    dataframe.push_back(ma);
+  }
+  dataframe >> mapper<map<string,string>, Congress>( [](auto ma){
+    //for(auto [k,v] : ma) {
+    //  cout << k << endl;
+    // }
+    auto congress = Congress{stoi(ma["congress"]), stoi(ma["age"])};
+    return congress;
+  }) >> groupBy<int, Congress>([](auto congress){
+    return congress.congress;
+  }) >> mapper<tuple<int,vector<Congress>>, int>( [](auto pair) {
+    auto key = get<0>(pair);
+    auto ages = get<1>(pair) 
+                >> mapper<Congress, int>( [](auto cong) { return cong.age; });
+    auto me = ages >> mean<int>();
+    auto ma = ages >> max<int>();
+    auto mi = ages >> min<int>();
+
+    cout << "WHEN CONGRESS: " << key << " MEAN AGE: " << me << " MAN AGE: " << ma << " MIN AGE: " << mi << endl;
+    return 0;
+  });
 }
 
 int main() {
+  congresExample();
+  return 1;
   classMapTest(); 
   return 1;
   cout << "a" << endl;

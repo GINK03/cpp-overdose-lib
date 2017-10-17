@@ -43,14 +43,46 @@ namespace OVERDOSE_EXT {
     return result;
   };
 
+  auto splitWith(const std::string& delimiter) {
+    return [delimiter](std::string source){
+      std::vector<std::string> result;
+      std::regex reg{delimiter};
+      std::copy(
+        std::sregex_token_iterator(source.begin(), source.end(), reg, -1),
+        std::sregex_token_iterator(),
+        std::back_inserter(result)
+      );
+      return result;
+    };
+  };  
+
   template<typename T>
-  void echo(const std::vector<T>& source) {
-    for(auto s: source) {
-      std::cout << s << " ";
-    }
-    std::cout << std::endl;
+  auto echo() {
+    return [](const std::vector<T>& source) {
+      std::cout << "[";
+      for(auto s: source) {
+        std::cout << s << ",";
+      }
+      std::cout << "]" << std::endl;
+    };
   };  
   
+  template<typename SOURCE, typename TARGET>
+  auto zipMap(std::vector<TARGET> target)  {
+    return [target](const std::vector<SOURCE>& source) {
+      std::map<SOURCE,TARGET> ma;
+      for(int i=0; i < source.size() && i < target.size(); i++) {
+        try{
+          auto key = source[i];
+          auto val = target[i];
+          ma[key] = val;
+        } catch(const std::exception& ex) {
+          continue;
+        }
+      }
+      return ma;
+    };
+  };  
   template<typename T>
   T sum(const std::vector<T>& source) {
     auto y = std::decay_t<decltype(source[0])>();
@@ -130,6 +162,38 @@ namespace OVERDOSE_EXT {
       std::string mozaic = "";
       for(auto b:buff) mozaic += b;
       return mozaic;
+    };
+  }
+
+  template<typename INPUT>
+  auto max() {
+    return [](const std::vector<INPUT>& inputs) {
+      INPUT buff = inputs[0];
+      for(INPUT input:inputs) {
+        if( input > buff ) buff = input;
+      }
+      return buff;
+    };
+  }
+  
+  template<typename INPUT>
+  auto min() {
+    return [](const std::vector<INPUT>& inputs) {
+      INPUT buff = inputs[0];
+      for(INPUT input:inputs) {
+        if( input < buff ) buff = input;
+      }
+      return buff;
+    };
+  }
+  
+  template<typename INPUT, typename OUTPUT=double>
+  auto mean() {
+    return [](const std::vector<INPUT>& inputs) {
+      INPUT buff = inputs[0];
+      int size = inputs.size();
+      for(INPUT input:inputs) buff += input;
+      return OUTPUT(buff)/size;
     };
   }
 
