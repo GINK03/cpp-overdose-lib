@@ -104,3 +104,44 @@ reducer<INPUT,OUTPUT> -> OUTPUT
 
 コンパイラの解釈力に依存しますが、文脈から型情報を指定しなくても通る場合があります  
 
+## filter
+Scala, Ruby, Kotlinなどのfilterとおなじです  
+条件に該当するデータのみを取り出します  
+例えば、2の倍数になるもののみを取り出すとこのようになります  
+```cpp
+void filterTest() {
+  vector<int>({1,2,3,4,5,6,7}) 
+    >> filter<int, int>([](int i){
+      return i%2 == 0;
+    }) >> echo<int>() ;
+}
+```
+filter<INPUT, OUTPUT>(FUNCTOR)  
+このようなインターフェースです
+
+## groupBy
+KotlinのgroupByに触発されて使いました  
+KotlinのgroupByではList型に変換すると、このようなデータ構造で帰ってきます。
+```
+List<Pair<KEY,List<ORIGINAL>>>
+```
+この構造が便利で特定のキーで集約したい場合によく使います。
+
+キーの型と、出力する型を指定し、キーを作るラムダ式を指定することで、同等の機能を実現します  
+この例では、1から100までのintのvectorを作成して、その値を5で割った値のあまりをキーにグルーピングをします  
+
+グルーピングした値はvector<tuple<KEY, ORIGINAL>>となります  
+```cpp
+void groupByTest() {
+  vector<int> src = OD::Range(1,100);
+  src >> groupBy<int, int>( [](auto i){ 
+    return i%5;
+  }) >> mapper<tuple<int,vector<int>>, int>( [](auto tup){
+    auto [key,value] = tup;
+    auto join = value >> joinToString<int>(",");
+    cout << "GROUPBY TEST KEY: " << key << " VALUE: " << join << endl;//
+    return 0;
+  });
+}
+```
+
