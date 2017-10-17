@@ -51,7 +51,7 @@ RのdplyrやPythonのpandas、Apache SparkのRDDなどを参考にして実装�
 dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比較表です
 
 | dplyr(R)   | Spark RDD(Scala,Java)| overdose(C++) |
-|:-----------|------------:|:------------:|
+|:-----------:|:------------:|:------------:|
 | %>%        | .(dot)      | >>(ダブルアロー)|
 | map        | map         | mapper       |
 | reduce     | reduce      | reduce       |
