@@ -227,7 +227,7 @@ SOURCE: 7 TARGET: g
 zip<SOURCE,TARGET>(std::vector<TARGET>) -> std::vector<std::pair<SOURCE,TARGET>>
 ```
 
-## sum
+## sum, mean, min, max
 他の言語でも色々実装されていますが、こんな感じです  
 ```cpp
 void sumMeanMaxMinTest() {
@@ -250,4 +250,19 @@ sum<INPUT> -> INPUT
 mean<INPUT> -> double
 max<INPUT> -> INPUT
 min<INPUT> -> INPUT
+```
+
+## flatten
+入れ子構造になったvectorを展開します  
+```cpp
+void flattenTest() {
+  vector<vector<int>> src = { {1,2},{2,3},{3,4},{4,5} };
+  src >> flatten<int>() >> echo<int>();
+}
+(出力)-> 
+[1,2,2,3,3,4,4,5]
+```
+インターフェースはこのようになっています  
+```cpp
+flatten<INPUT>() -> std::vector<INPUT>
 ```
