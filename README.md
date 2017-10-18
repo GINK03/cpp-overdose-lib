@@ -72,8 +72,8 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 
 ## minimal install 
 
-** ご注意!! **
-** 完全にclang++以外の存在を忘れていましが、このプログラムはclang 5.0.0(final)で開発と動作確認しています **
+** ご注意!! **  
+** 完全にclang++以外の存在を忘れていましが、このプログラムはclang 5.0.0(final)で開発と動作確認しています **  
 ```console
 $ clang --version
 clang version 5.0.0 (tags/RELEASE_500/final)
