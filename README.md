@@ -81,6 +81,17 @@ $ make
 $ make test <- errorが出なければOK
 $ sudo make install <- システム全体に反映する際にはやる（任意）
 ```
+**サンプルの実行**
+example.cppというFizzBuzzの10000までの数のFizz, Buzz, FizzBuzz, Otherをカウントします  
+コンパイルと実行にするにはこうします  
+```console
+$ make 
+$ ./a.out
+KEY: Buzz VALUE_SIZE: 1333 
+KEY: Fizz VALUE_SIZE: 2667
+KEY: FizzBuzz VALUE_SIZE: 666 
+KEY: Other VALUE_SIZE: 5333   
+```
 
 ## mapper
  一般的なScala, Ruby, Kotlinなどのmap処理に該当します。vectorの要素の中身に、ラムダ式でデータを操作することで、任意の形に変形します　　
