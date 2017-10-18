@@ -1,5 +1,5 @@
 # cpp-overdose-lib
-C++17のラムダ式と、テンプレートを用いることで、KotlinやScalaなどに似たシンタックスでRのdplyrの該当する機能が動かせることを示します
+C++17のラムダ式と、テンプレートを用いることで、Rのdplyr, Kotlin, Scalaなどに似たシンタックスで、同党の機能が動かせることを示します
 
 ## もっと関数型ライクにC++を使いたい！
 C++の言語の特徴として、その手続き的な側面が多く強調されます  
@@ -67,7 +67,9 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 | ユニークにする | distinct   | distinct    | distinct     |
 | 要素を追加する | mutate     | (mapで代替) | (mapperで代替) | 
 | index付きmap | -          | withIndex  | mapperIndexed | 
- 
+| シリアライザ | -           | toString() | SERIAL,DESERIAL | 
+| 並列性 | multidplyr | 並列性がある | concurrent::mapper | 
+
 ## mapper
  一般的なScala, Ruby, Kotlinなどのmap処理に該当します。vectorの要素の中身に、ラムダ式でデータを操作することで、任意の形に変形します　　
  
@@ -310,4 +312,83 @@ Index: 4 Val: a
 mapperIndexed<INPUT, OUTPUT>(FUNCTOR) -> std::vector<OUTPUT>
 ```
 
+## シリアライザ, デシリアライザ
+今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  
+C++はOSのメモリ空間を直接参照できるのでプリミティブな型(int, double)などはそのデータをそのままdumpすることができます  
+std::stringなどは、クラスの値なので内部でメモリを内容をどれを取るか決める必要がありますが、char\*として表現できるので、char\*として保存して、復旧時にstd::stringに変換します  
+
+C++というよりC言語芸なのですが、C++のtemplateとconstexprの型情報による分岐を組み合わせることで、このように、シリアライズとデシリアライズを行えます  
+```cpp
+struct Sample {
+  int a;
+  double b;
+  std::string c;
+  std::string serial() {
+    return OD::SERIAL::dump(&a,this) + OD::SERIAL::SEPARATOR + OD::SERIAL::dump(&b,this) + OD::SERIAL::SEPARATOR + OD::SERIAL::dump(&c,this);
+  };
+};
+
+// シリアライズとデシリアライズテスト
+void testSerialDesrial() {
+  auto sa1 = Sample{1, 2.0, "Hoge"};
+  auto serial = sa1.serial();
+  cout << "SERIAL: " << serial << endl;
+  auto sa = OD::DESERIAL::recover<Sample>(serial);
+  cout << "desrialized " << sa.a << " " << sa.b << " " << sa.c << " ," <<  endl;
+}
+(出力)-> 
+SERIAL: int<Left>0<Left>01 00 00 00 <Left>4<Right>double<Left>8<Left>00 00 00 00 00 00 00 64 <Left>8<Right>std::string<Left>16<Left>Hoge<Left>32
+desrialized 1 2 Hoge
+```
+
+## 並列性
+マシン間をまたいでの並列性は担保していませんが、コンピュータ内部のCPUのコアぶんだけ並列でmap処理を行うことができます  
+これはJavaとかの並列性が担保されたmapなどと同等だと思われ、処理順序が担保されないので、データのindexなどを気にしない処理に向いています  
+例えば、一般的に重いと思われる素数判定を1から1,000,000まで行うとこの程度の時間が必要で、これはPythonの役10倍です  
+
+```console
+[C++でconcurrent::mapperを用いる場合]
+$ time ./bin/a.out
+real    3m4.833s
+```
+実験に用いたコード
+```cpp
+void testPrimeCheck() {
+  OD::Range(1, 1000000) >> concurrent::mapper<int,pair<int,bool>>( [](int i) {
+    bool isPrime = true;
+    for(int s=2; s <= i/2; s++) {
+      if(i%s == 0) {
+        isPrime = false;
+        break;
+      }
+    }
+    return make_pair(i, isPrime);
+  });
+}
+```
+
+```console
+[Python3で行う場合]
+time python3 test.py  > d
+real    33m21.345s 
+```
+
+実験に用いたコード
+```python
+for i in range(2,1000000):
+  isPrime = True
+  for j in range(2, i//2):
+    if i%j == 0:
+      isPrime = False
+      break
+
+  if isPrime:
+    print(i)
+```
+
+## 総括
+C++で他の言語で用いられているような、いくつかの便利な関数を用意することができました  
+C++は、動的な言語に比べてコンパイル時に静的に型の情報が矛盾がないようにチェックされます  
+
+例えば、この方法ばバッチ的に回す分析でできるだけ、高速に処理したいなどのモチベーションに向いており、AWSのサービスと組み合わせて定常分析に用いるなどが考えられるかもしれません  
 
