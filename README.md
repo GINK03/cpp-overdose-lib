@@ -313,9 +313,29 @@ mapperIndexed<INPUT, OUTPUT>(FUNCTOR) -> std::vector<OUTPUT>
 
 ## シリアライザ, デシリアライザ
 今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  
-C
-今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  +
-今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  +
-今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  
-今回
-今回じ
+C++はOSのメモリ空間を直接参照できるのでプリミティブな型(int, double)などはそのデータをそのままdumpすることができます  
+std::stringなどは、クラスの値なので内部でメモリを内容をどれを取るか決める必要がありますが、char\*として表現できるので、char\*として保存して、復旧時にstd::stringに変換します  
+
+C++というよりC言語芸なのですが、C++のtemplateとconstexprの型情報による分岐を組み合わせることで、このように、シリアライズとデシリアライズを行えます  
+```cpp
+struct Sample {
+  int a;
+  double b;
+  std::string c;
+  std::string serial() {
+    return OD::SERIAL::dump(&a,this) + OD::SERIAL::SEPARATOR + OD::SERIAL::dump(&b,this) + OD::SERIAL::SEPARATOR + OD::SERIAL::dump(&c,this);
+  };
+};
+
+// シリアライズとデシリアライズテスト
+void testSerialDesrial() {
+  auto sa1 = Sample{1, 2.0, "Hoge"};
+  auto serial = sa1.serial();
+  cout << "SERIAL: " << serial << endl;
+  auto sa = OD::DESERIAL::recover<Sample>(serial);
+  cout << "desrialized " << sa.a << " " << sa.b << " " << sa.c << " ," <<  endl;
+}
+(出力)-> 
+SERIAL: int<Left>0<Left>01 00 00 00 <Left>4<Right>double<Left>8<Left>00 00 00 00 00 00 00 64 <Left>8<Right>std::string<Left>16<Left>Hoge<Left>32
+desrialized 1 2 Hoge
+```
