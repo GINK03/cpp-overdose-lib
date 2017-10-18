@@ -369,7 +369,10 @@ void testPrimeCheck() {
 
 ```console
 [Python3で行う場合]
+time python3 test.py  > d
+real    33m21.345s 
 ```
+
 実験に用いたコード
 ```python
 for i in range(2,1000000):
