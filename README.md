@@ -70,6 +70,18 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 | シリアライザ | -           | toString() | SERIAL,DESERIAL | 
 | 並列性 | multidplyr | 並列性がある | concurrent::mapper | 
 
+## minimal install 
+C++で作られているので、/usr/includeにインクルードファイルを設置し、/usr/lib(64)にsoをおけば、システム全体から利用できるようになりますが、
+とりま、example.cppを編集することで任意の機能を成り立たせることができます。
+
+```console
+$ git clone cpp-overdose-lib/
+$ cd cpp-overdose-lib/
+$ make 
+$ make test <- errorが出なければOK
+$ sudo make install <- システム全体に反映する際にはやる（任意）
+```
+
 ## mapper
  一般的なScala, Ruby, Kotlinなどのmap処理に該当します。vectorの要素の中身に、ラムダ式でデータを操作することで、任意の形に変形します　　
  
