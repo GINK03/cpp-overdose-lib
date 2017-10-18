@@ -7,19 +7,17 @@
 #include <queue>
 #include <iomanip>
 
-#include "../Split.hpp"
-#include "../Reflection.hpp"
+#include "Split.hpp"
+#include "Reflection.hpp"
 
-#include <any>
-#include <string.h>
-#include "../Open.hpp"
-#include "../Vec.hpp"
-#include "../Ope.hpp"
-#include "../Range.hpp"
-#include "../Enumerate.hpp"
-#include "../List.hpp"
-#include "../ListArrow.hpp"
-#include "../Arrow.hpp"
+#include "Open.hpp"
+#include "Vec.hpp"
+#include "Ope.hpp"
+#include "Range.hpp"
+#include "Enumerate.hpp"
+#include "List.hpp"
+#include "ListArrow.hpp"
+#include "Arrow.hpp"
 
 using namespace std;
 namespace OD=OVERDOSE;
@@ -237,7 +235,7 @@ void testSerialDesrial() {
 }
 
 void testPrimeCheck() {
-  OD::Range(1, 1000000) >> concurrent::mapper<int,pair<int,bool>>( [](int i) {
+  OD::Range(1, 1000) >> concurrent::mapper<int,pair<int,bool>>( [](int i) {
     bool isPrime = true;
     for(int s=2; s <= i/2; s++) {
       if(i%s == 0) {
@@ -250,7 +248,6 @@ void testPrimeCheck() {
 }
 int main() {
   testPrimeCheck(); 
-  return 0;
   // create task dataset
   auto iv = OD::Range(0, 1000);
   iv >> concurrent::mapper<int,int>( [](auto i){
@@ -258,46 +255,6 @@ int main() {
   }) >> echo<int>() ;
  
   testSerialDesrial();
-  /* std::queue<int> que;
-  for(auto i:iv) que.push(i);
-  // check CPU status
-  int cpu_num = std::thread::hardware_concurrency();
-
-  // lambda 
-  auto task = [](int i) { 
-    string ret = "";
-    for(int num = 0; num < 100000000; num++) ret += to_string(num%2);
-    return ret; 
-  };
-  
-  
-  // make initial status
-  std::map<int, std::future<std::string>> workers_table;
-  for (int i = 0; i < cpu_num; ++i) {
-    workers_table[i] = std::async(std::launch::async, task, que.front() );
-    que.pop();
-    if(que.size() == 0) return 0;
-  }
-
-  // pooling checker of workers, and if finished, add new task
-
-  
-  while(true) {
-    for (auto& [index, element] : workers_table) {
-      auto status = element.wait_for(std::chrono::seconds(1));
-      if (status == std::future_status::deferred) {
-        std::cout << "index " << index << " deferred\n";
-      } else if (status == std::future_status::timeout) {
-        std::cout << "index " << index << " timeout\n";
-      } else if (status == std::future_status::ready) {
-        std::cout << "index ready! " << index << " (実質これが終了ということらしい)\n";
-        workers_table[index] = std::async(std::launch::async, task, que.front());
-        que.pop();
-        if(que.size() == 0) return 0;
-      }
-    }
-  } */
-  return 0;
   congresExample();
   echoTest();
   mapperTest();
@@ -310,9 +267,8 @@ int main() {
   flattenTest();
   distinctTest();
   mapperIndexedTest();
-  return 1;
   classMapTest(); 
-  return 1;
+  
   cout << "a" << endl;
   vector<int> as = OD::Range(1,100);
   Vec vs(as);
@@ -365,7 +321,7 @@ int main() {
   }
 
   // Openの便利かんすう
-  for( auto line : OD::Open("./Makefile") ) {
+  for( auto line : OD::Open("../Makefile") ) {
     cout << "Opened: " << line << endl; 
   }
 
@@ -375,10 +331,6 @@ int main() {
     cout << "step1 " << i << endl; 
     return i*3;
   } )
-  /*.map<int>( [](int i ){ 
-    cout << "step2 " << i << endl;
-    return i%5;
-  }).toSet<int>()*/
   .map<int>( [](int i) {
     cout << "step3 " << i << endl;
     return i;
