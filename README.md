@@ -68,6 +68,7 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 | 要素を追加する | mutate     | (mapで代替) | (mapperで代替) | 
 | index付きmap | -          | withIndex  | mapperIndexed | 
 | シリアライザ | -           | toString() | SERIAL,DESERIAL | 
+| 並列性 | multidplyr | 並列性がある | concurrent::mapper | 
 
 ## mapper
  一般的なScala, Ruby, Kotlinなどのmap処理に該当します。vectorの要素の中身に、ラムダ式でデータを操作することで、任意の形に変形します　　
@@ -339,3 +340,10 @@ void testSerialDesrial() {
 SERIAL: int<Left>0<Left>01 00 00 00 <Left>4<Right>double<Left>8<Left>00 00 00 00 00 00 00 64 <Left>8<Right>std::string<Left>16<Left>Hoge<Left>32
 desrialized 1 2 Hoge
 ```
+
+## 並列性
+マシン間をまたいでの並列性は担保していませんが、コンピュータ内部のCPUのコアぶんだけ並列でmap処理を行うことができます  
+これはJavaとかの並列性が担保されたmapなどと同等だと思われ、処理順序が担保されないので、データのindexなどを気にしない処理に向いています  
+例えば、一般的に重いと思われる素数判定を1から100,000,000まで行うとこの程度の時間が必要で、これはPythonのN倍です  
+
+
