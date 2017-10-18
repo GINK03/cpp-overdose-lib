@@ -3,15 +3,23 @@
 #include <vector>
 #include <thread>
 #include <future>
-#include "Split.hpp"
-#include "Open.hpp"
-#include "Vec.hpp"
-#include "Ope.hpp"
-#include "Range.hpp"
-#include "Enumerate.hpp"
-#include "List.hpp"
-#include "ListArrow.hpp"
-#include "Arrow.hpp"
+#include <chrono>
+#include <queue>
+#include <iomanip>
+
+#include "../Split.hpp"
+#include "../Reflection.hpp"
+
+#include <any>
+#include <string.h>
+#include "../Open.hpp"
+#include "../Vec.hpp"
+#include "../Ope.hpp"
+#include "../Range.hpp"
+#include "../Enumerate.hpp"
+#include "../List.hpp"
+#include "../ListArrow.hpp"
+#include "../Arrow.hpp"
 
 using namespace std;
 namespace OD=OVERDOSE;
@@ -208,15 +216,6 @@ void mapperIndexedTest() {
   });
 }
 
-#include <future> 
-#include <chrono>
-#include <queue>
-#include <iomanip>
-
-#include "Reflection.hpp"
-
-#include <any>
-#include <string.h>
 
 struct Sample {
   int a;
@@ -237,7 +236,21 @@ void testSerialDesrial() {
   cout << "desrialized " << sa.a << " " << sa.b << " " << sa.c << " ," <<  endl;
 }
 
+void testPrimeCheck() {
+  OD::Range(1, 1000000) >> concurrent::mapper<int,pair<int,bool>>( [](int i) {
+    bool isPrime = true;
+    for(int s=2; s <= i/2; s++) {
+      if(i%s == 0) {
+        isPrime = false;
+        break;
+      }
+    }
+    return make_pair(i, isPrime);
+  });
+}
 int main() {
+  testPrimeCheck(); 
+  return 0;
   // create task dataset
   auto iv = OD::Range(0, 1000);
   iv >> concurrent::mapper<int,int>( [](auto i){
