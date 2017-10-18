@@ -1,5 +1,5 @@
 # cpp-overdose-lib
-C++17のラムダ式と、テンプレートを用いることで、KotlinやScalaなどに似たシンタックスでRのdplyrの該当する機能が動かせることを示します
+C++17のラムダ式と、テンプレートを用いることで、Rのdplyr, Kotlin, Scalaなどに似たシンタックスで、同党の機能が動かせることを示します
 
 ## もっと関数型ライクにC++を使いたい！
 C++の言語の特徴として、その手続き的な側面が多く強調されます  
@@ -67,7 +67,8 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 | ユニークにする | distinct   | distinct    | distinct     |
 | 要素を追加する | mutate     | (mapで代替) | (mapperで代替) | 
 | index付きmap | -          | withIndex  | mapperIndexed | 
- 
+| シリアライザ | -           | toString() | SERIAL,DESERIAL | 
+
 ## mapper
  一般的なScala, Ruby, Kotlinなどのmap処理に該当します。vectorの要素の中身に、ラムダ式でデータを操作することで、任意の形に変形します　　
  
@@ -310,4 +311,11 @@ Index: 4 Val: a
 mapperIndexed<INPUT, OUTPUT>(FUNCTOR) -> std::vector<OUTPUT>
 ```
 
-
+## シリアライザ, デシリアライザ
+今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  
+C
+今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  +
+今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  +
+今回実装した内容は、プリミティブ型 + std::stringのみに対応したクラスや構造体のシリアライザとデシリアライザです  
+今回
+今回じ
