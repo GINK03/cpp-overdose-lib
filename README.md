@@ -7,7 +7,15 @@ C++の言語の特徴として、その手続き的な側面が多く強調さ�
 
 例えば、Rという統計言語にはデータのオペレーションが感覚的にわかりやすい、dplyerというライブラリがあります  
 
+C++がデータ分析の文脈で使われないのはなぜでしょうか。いろんな人がいろんなことを言いますが、早い話、サッと組んで、サッと動かすということができないからです  
+
+`The answers already cover the main reason data scientists don't use C and that is the convenience of rapid prototype building.`  
+
+[1](https://www.quora.com/Why-dont-data-scientists-use-C-C++)
+これを解決できそうな機運が少しあり、dplyrやScala Likeなコードスタイルを用いることで、手続き型特有の大量の一時変数を隠蔽することに成功しました  
+
 これに似せたライブラリ overdose-libを作成したので、ご紹介させてください  
+
 
 ## ラムダとTemplateとautoによる型推定  
 ラムダは匿名関数と呼ばれ、リテラルの中に埋め込むことができ、また変数に束縛することもできる名前のない関数です。ラムダ式は変数に束縛することも可能で、変数に代入したラムダ式を取り回して、任意の処理をすることができます  
