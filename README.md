@@ -75,7 +75,7 @@ C++で作られているので、/usr/includeにインクルードファイル�
 とりま、example.cppを編集することで任意の機能を成り立たせることができます。
 
 ```console
-$ git clone cpp-overdose-lib/
+$ git clone https://github.com/GINK03/cpp-overdose-lib
 $ cd cpp-overdose-lib/
 $ make 
 $ make test <- errorが出なければOK
