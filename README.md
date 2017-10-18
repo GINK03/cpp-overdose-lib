@@ -351,9 +351,35 @@ desrialized 1 2 Hoge
 $ time ./bin/a.out
 real    3m4.833s
 ```
+実験に用いたコード
+```cpp
+void testPrimeCheck() {
+  OD::Range(1, 1000000) >> concurrent::mapper<int,pair<int,bool>>( [](int i) {
+    bool isPrime = true;
+    for(int s=2; s <= i/2; s++) {
+      if(i%s == 0) {
+        isPrime = false;
+        break;
+      }
+    }
+    return make_pair(i, isPrime);
+  });
+}
+```
 
 ```console
 [Python3で行う場合]
 ```
+実験に用いたコード
+```python
+for i in range(2,1000000):
+  isPrime = True
+  for j in range(2, i//2):
+    if i%j == 0:
+      isPrime = False
+      break
 
+  if isPrime:
+    print(i)
+```
 
