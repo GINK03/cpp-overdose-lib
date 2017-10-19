@@ -12,6 +12,9 @@ jobs:
           name: Install
           command: pacman -S clang --noconfirm
       - run:
+          name: Install
+          command: pacman -S make --noconfirm
+      - run:
           name: make lib
           command: make
       - run:
