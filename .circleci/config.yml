@@ -18,6 +18,9 @@ jobs:
           name: make lib
           command: make
       - run:
-          name: Print the Current Time
-          command: date
+          name: run test 
+          command: make test
+      - run:
+          name: run example
+          command: ./a.out
 
