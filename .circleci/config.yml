@@ -7,10 +7,10 @@ jobs:
       - checkout
       - run:
           name: Update
-          command: pacman -Syu
+          command: pacman -Syu --noconfirm
       - run:
           name: Install
-          command: pacman -S clang
+          command: pacman -S clang --noconfirm
       - run:
           name: Greeting
           command: echo Hello, world.
