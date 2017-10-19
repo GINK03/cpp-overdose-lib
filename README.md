@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/GINK03/cpp-overdose-lib/tree/master.svg?style=svg)](https://circleci.com/gh/GINK03/cpp-overdose-lib/tree/master)
+
 # cpp-overdose-lib
 C++17のラムダ式と、テンプレートを用いることで、Rのdplyr, Kotlin, Scalaなどに似たシンタックスで、同等の機能が動かせることを示します
 
@@ -16,6 +18,10 @@ C++がデータ分析の文脈で使われないのはなぜでしょうか。�
 
 これに似せたライブラリ overdose-libを作成したので、ご紹介させてください  
 
+## Requirement
+- clang++( 5.0>= )
+- gnumake
+要求するコンパイラのバージョンが高いので、ArchLinuxなど最新のソフトウェアが積極的に導入されるものが望ましいです  
 
 ## ラムダとTemplateとautoによる型推定  
 ラムダは匿名関数と呼ばれ、リテラルの中に埋め込むことができ、また変数に束縛することもできる名前のない関数です。ラムダ式は変数に束縛することも可能で、変数に代入したラムダ式を取り回して、任意の処理をすることができます  
