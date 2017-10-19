@@ -10,8 +10,9 @@ test:
 
 .PHONY: clean
 clean:
-	rm bin/*.out
-	rm lib/*
+	rm bin/*.out || echo ""
+	rm lib/* || echo ""
+	rm a.out || echo ""
   
 
 
