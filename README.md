@@ -1,5 +1,5 @@
 # cpp-overdose-lib
-C++17のラムダ式と、テンプレートを用いることで、Rのdplyr, Kotlin, Scalaなどに似たシンタックスで、同党の機能が動かせることを示します
+C++17のラムダ式と、テンプレートを用いることで、Rのdplyr, Kotlin, Scalaなどに似たシンタックスで、同等の機能が動かせることを示します
 
 ## もっと関数型ライクにC++を使いたい！
 C++の言語の特徴として、その手続き的な側面が多く強調されます  
@@ -7,14 +7,22 @@ C++の言語の特徴として、その手続き的な側面が多く強調さ�
 
 例えば、Rという統計言語にはデータのオペレーションが感覚的にわかりやすい、dplyerというライブラリがあります  
 
+C++がデータ分析の文脈で使われないのはなぜでしょうか。いろんな人がいろんなことを言いますが、早い話、サッと組んで、サッと動かすということができないからです  
+
+`The answers already cover the main reason data scientists don't use C and that is the convenience of rapid prototype building.`  
+
+[1](https://www.quora.com/Why-dont-data-scientists-use-C-C++)
+これを解決できそうな機運が少しあり、dplyrやScala Likeなコードスタイルを用いることで、手続き型特有の大量の一時変数を隠蔽することに成功しました  
+
 これに似せたライブラリ overdose-libを作成したので、ご紹介させてください  
 
+
 ## ラムダとTemplateとautoによる型推定  
-ラムダは匿名関数と呼ばれ、リテラルの中に埋め込むことができる名前のない関数です。ラムダ式は変数に束縛することも可能で、変数に代入したラムダ式を取り回して、任意の処理をすることができます  
+ラムダは匿名関数と呼ばれ、リテラルの中に埋め込むことができ、また変数に束縛することもできる名前のない関数です。ラムダ式は変数に束縛することも可能で、変数に代入したラムダ式を取り回して、任意の処理をすることができます  
 
 TemplateはもともとジェネリックなSTLの型を指定することができるものでしたが、型以外にも実数値やラムダ式を引数に取れるし、コンパイル時に動作するので、コンパイル時に実行し計算するものとなっています  
 
-autoは型推論で、型宣言を簡潔にするものですが、一部ジェネリックな動作もすることが期待できて、戻り値の型がテンプレートやコンパイル時の型の取得のdecletypeなどで、自動的に推論させることが可能です。  
+autoは型推論で、型宣言を簡潔にするものですが、一部戻り値などをジェネリックに動作することが期待できて、戻り値の型がテンプレートやコンパイル時の型の取得のdecletypeなどで、自動的に推論させることが可能です。  
 
 これを用いると、関数型言語の一つの要件である第1級関数という関数をデータと同じように扱うことが可能になります  
 
@@ -69,6 +77,37 @@ dplyrとSpark RDDと今回作成したoverdose(仮称)の関数と機能の比�
 | index付きmap | -          | withIndex  | mapperIndexed | 
 | シリアライザ | -           | toString() | SERIAL,DESERIAL | 
 | 並列性 | multidplyr | 並列性がある | concurrent::mapper | 
+
+## minimal install 
+
+** ご注意!! **  
+** 完全にclang++以外の存在を忘れていましが、このプログラムはclang 5.0.0(final)で開発と動作確認しています **  
+```console
+$ clang++ --version
+clang version 5.0.0 (tags/RELEASE_500/final)
+```
+
+C++で作られているので、/usr/includeにインクルードファイルを設置し、/usr/lib(64)にsoをおけば、システム全体から利用できるようになりますが、
+とりま、example.cppを編集することで任意の機能を成り立たせることができます。
+
+```console
+$ git clone https://github.com/GINK03/cpp-overdose-lib
+$ cd cpp-overdose-lib/
+$ make 
+$ make test <- errorが出なければOK
+$ sudo make install <- システム全体に反映する際にはやる（任意）
+```
+**サンプルの実行**
+example.cppというFizzBuzzの10000までの数のFizz, Buzz, FizzBuzz, Otherをカウントします  
+コンパイルと実行にするにはこうします  
+```console
+$ make 
+$ ./a.out
+KEY: Buzz VALUE_SIZE: 1333 
+KEY: Fizz VALUE_SIZE: 2667
+KEY: FizzBuzz VALUE_SIZE: 666 
+KEY: Other VALUE_SIZE: 5333   
+```
 
 ## mapper
  一般的なScala, Ruby, Kotlinなどのmap処理に該当します。vectorの要素の中身に、ラムダ式でデータを操作することで、任意の形に変形します　　
