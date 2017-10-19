@@ -17,6 +17,9 @@ jobs:
       - run:
           name: make lib
           command: make
+      - run: 
+          name: flash LD_LIBRARY_PATH
+          command: LD_LIBRARY_PATH=$PWD/lib:$LD_LIBRARY_PATH; export LD_LIBRARY_PATH
       - run:
           name: run test 
           command: make test
