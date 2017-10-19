@@ -2,7 +2,7 @@ iversion: 2
 jobs:
   build:
     docker:
-      - image: debian:stretch
+      - image: base/archlinux
     steps:
       - checkout
       - run:
