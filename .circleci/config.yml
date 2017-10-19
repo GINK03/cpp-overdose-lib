@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install
+          command: pacman -S clang
+      - run:
           name: Greeting
           command: echo Hello, world.
       - run:
