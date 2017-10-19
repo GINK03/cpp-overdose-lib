@@ -1,6 +1,7 @@
 so:
 	clang++ -std=c++1z -I./include src/Open.cpp -fPIC -shared -o lib/liboverdose_open.so
 	clang++ -std=c++1z -I./include src/Split.cpp -fPIC -shared -o lib/liboverdose_split.so
+	clang++ -std=c++1z -I./include example.cpp -o a.out -lpthread -L./lib -Wl,-rpath ./ -loverdose_open -loverdose_split 
 
 .PHONY: test
 test:
