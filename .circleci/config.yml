@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Update
+          command: pacman -Syu
+      - run:
           name: Install
           command: pacman -S clang
       - run:
